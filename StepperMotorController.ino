@@ -44,7 +44,7 @@ void setup()
 void loop()
 {
   potentioMeterReading=analogRead(A0);
-  temp = map(potentioMeterReading,0,1024,4500,2500);
+  temp = map(potentioMeterReading,0,1024,4500,800);
   
   
   Serial.println(150000.0/temp);
