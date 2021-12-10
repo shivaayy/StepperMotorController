@@ -1,60 +1,51 @@
 
 int dir_pin=3;
 int pul_pin=2;
-int temp=2650;
-float z=0.0;
-int potentioMeterReading=0;
+int motor_direction=HIGH;
+unsigned long int initial_time=millis();
+int direction_change_time=5000;
 void setup()
 {
   pinMode(dir_pin,OUTPUT);
   pinMode(pul_pin,OUTPUT);
   digitalWrite(dir_pin,HIGH);
   Serial.begin(9600);
-  
-  for(int j=1;j<=3;j++){
-    Serial.println(j);
-    z=150000.0/temp;
-    Serial.println(z);
-    
-    for(int i=0;i<200*24;i++){
-      digitalWrite(pul_pin,HIGH);
-      delayMicroseconds(temp);
-      digitalWrite(pul_pin,LOW);
-      delayMicroseconds(temp);
-  
- }
- 
-    temp=temp-600;
-    
-  }
-  temp=temp-100; 
-  z=150000.0/temp;
-  Serial.println(z);
-  for(int i=0;i<200*30;i++){
-  digitalWrite(pul_pin,HIGH);
-  delayMicroseconds(temp);
-  digitalWrite(pul_pin,LOW);
-  delayMicroseconds(temp);
-  
- }
-   
-	
 }
 
 void loop()
 {
-  potentioMeterReading=analogRead(A0);
-  temp = map(potentioMeterReading,0,1024,1500,750);
-  
-  
-  Serial.println(150000.0/temp);
-  
-  for(int i=0;i<200*3;i++){
+//  int potentioMeterReading=analogRead(A0);
+//  int rpm = map(potentioMeterReading,0,1024,30,150);
+//  int time_delay=30000/rpm;
+//  Serial.println("-----rpm-----");
+//  Serial.println(rpm);
+//  Serial.println("----time delay------");
+//  Serial.println(time_delay);
+//  Serial.println("----direction------");
+//  Serial.println(motor_direction);
+//  unsigned long int final_time=millis();
+//  Serial.println("----final time------");
+//  Serial.println(final_time);
+//  if(final_time-initial_time>direction_change_time){
+//    changeDirection();
+//    initial_time=final_time;
+//  }
+  for(int i=0;i<200*5;i++){
     digitalWrite(pul_pin,HIGH);
-    delayMicroseconds(temp);
-    digitalWrite(pul_pin,LOW);
-    delayMicroseconds(temp);
+    delayMicroseconds(1000);
+//      delayMicroseconds(time_delay);
+      digitalWrite(pul_pin,LOW);
+      delayMicroseconds(1000);
+//      delayMicroseconds(time_delay);
+  }
   
- }
+}
 
+void changeDirection(){
+  if(motor_direction==1)
+  motor_direction=0;
+  else
+  motor_direction=1;
+  digitalWrite(dir_pin,motor_direction);
+  
 }
