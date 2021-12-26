@@ -16,8 +16,7 @@ void setup()
 //    z=150000.0/temp;
 //    Serial.println(z);
     
-    for(int i=0;i<200
-    ;i++){
+    for(int i=0;i<200*3;i++){
       digitalWrite(pul_pin,HIGH);
       delayMicroseconds(temp);
       digitalWrite(pul_pin,LOW);
