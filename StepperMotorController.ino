@@ -1,51 +1,23 @@
-
-int dir_pin=3;
-int pul_pin=2;
-int motor_direction=HIGH;
-unsigned long int initial_time=millis();
-int direction_change_time=5000;
-void setup()
-{
-  pinMode(dir_pin,OUTPUT);
-  pinMode(pul_pin,OUTPUT);
-  digitalWrite(dir_pin,HIGH);
+#include <AccelStepper.h>
+AccelStepper stepper(1,2,3);
+long int maximumSpeed=800;
+int count=0;
+void setup() {
   Serial.begin(9600);
+  stepper.setMaxSpeed(maximumSpeed);
+  stepper.setAcceleration(400);
+  stepper.moveTo(12000);
 }
 
-void loop()
-{
- int potentioMeterReading=analogRead(A0);
- int time_delay = map(potentioMeterReading,0,1024,3000,805);
- int rpm=150000/time_delay;
- Serial.println("-----rpm-----");
- Serial.println(rpm);
- Serial.println("----time delay------");
- Serial.println(time_delay);
- Serial.println("----direction------");
- Serial.println(motor_direction);
- unsigned long int final_time=millis();
-// Serial.println("----final time------");
-// Serial.println(final_time);
- if(final_time-initial_time>direction_change_time){
-   changeDirection();
-   initial_time=final_time;
- }
-  for(int i=0;i<200*20;i++){
-    digitalWrite(pul_pin,HIGH);
-    // delayMicroseconds(1000);
-     delayMicroseconds(time_delay);
-      digitalWrite(pul_pin,LOW);
-      // delayMicroseconds(1000);
-     delayMicroseconds(time_delay);
+void loop() {
+  while(true){
+      if (stepper.distanceToGo() == 0){
+      maximumSpeed=map(analogRead(A0),0,1023,400,1600);
+      Serial.println(maximumSpeed);
+      stepper.setMaxSpeed(maximumSpeed);
+      stepper.moveTo(-stepper.currentPosition());
+   }
+    stepper.run();
   }
-  
-}
 
-void changeDirection(){
-  if(motor_direction==1)
-  motor_direction=0;
-  else
-  motor_direction=1;
-  digitalWrite(dir_pin,motor_direction);
-  
 }
