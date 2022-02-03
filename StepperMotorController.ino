@@ -1,76 +1,42 @@
-#include <AccelStepper.h>
-AccelStepper stepper(1,2,3);
-long int maximumSpeed=4000;
-int count=0;
 // stepper control global variable
 int starting_delay_microseconds = 10000;
-int final_delay_microseconds_at_max_speed = 125;
+int final_delay_microseconds_at_max_speed =125;
 int current_delay_microseconds=starting_delay_microseconds;
 unsigned long int start_millis=0;
 unsigned long int current_millis=0;
-unsigned long int setup_time_in_sec=0;
+unsigned long int time_in_sec=0;
 /////////
 
 //
-float acceleration =30;  // steps/sec^2 
+float acceleration =1;  // steps/sec^2 
 //
 void setup() {
-  Serial.begin(9600);
+//  Serial.begin(9600);
   DDRD=B00001100;
 }
 
 void loop() {
-  while(current_delay_microseconds>final_delay_microseconds_at_max_speed){
-    custom_run(true);
-    PORTD=B00001100;
-    delayMicroseconds(current_delay_microseconds);
-    PORTD=B00001000;
-    delayMicroseconds(current_delay_microseconds);    
-  }
-    while(true){
-    custom_run(false);
-    PORTD=B00001100;
-    delayMicroseconds(current_delay_microseconds);
-    PORTD=B00001000;
-    delayMicroseconds(current_delay_microseconds);    
-  }
-
-}
-
-void custom_run(bool setup_mode){
-  unsigned long int temp_millis= millis();
   
-if(setup_mode && current_delay_microseconds>final_delay_microseconds_at_max_speed && temp_millis-current_millis>=1000){
-//  Serial.println("setup");
-//Serial.println(current_delay_microseconds);
-  current_millis=temp_millis;
-  setup_time_in_sec++;
-  current_delay_microseconds=500000.0*starting_delay_microseconds/(500000+starting_delay_microseconds*acceleration*setup_time_in_sec);
-}
-else{
-  if(temp_millis-current_millis>=1000){
-//      int temp_read= map(analogRead(A0),0,1023,150,124);
-//      if(temp_read-final_delay_microseconds_at_max_speed>1 || temp_read-final_delay_microseconds_at_max_speed<-1){
-//        setup_time_in_sec=0;
-//        final_delay_microseconds_at_max_speed=temp_read;
-//        starting_delay_microseconds=current_delay_microseconds;
-//        }
-  }
-  if( current_delay_microseconds>final_delay_microseconds_at_max_speed && temp_millis-current_millis>=1000){
-//    Serial.println("accelarting");
-//Serial.println(current_delay_microseconds);
-  current_millis=temp_millis;
-  setup_time_in_sec++;
-  current_delay_microseconds=500000.0*starting_delay_microseconds/(500000+starting_delay_microseconds*acceleration*setup_time_in_sec);
-}
-  else if(current_delay_microseconds-final_delay_microseconds_at_max_speed<-1 && temp_millis-current_millis>=1000){
-//    Serial.println("dis-accelarting");
-//Serial.println(current_delay_microseconds);
-  current_millis=temp_millis;
-  setup_time_in_sec++;
-  current_delay_microseconds=500000.0*starting_delay_microseconds/(500000-starting_delay_microseconds*acceleration*setup_time_in_sec);
-}
-
+    while(true){
+   custom_run();
+    PORTD=B00001100;
+    delayMicroseconds(current_delay_microseconds);
+    PORTD=B00001000;
+    delayMicroseconds(current_delay_microseconds);    
   }
 
+}
+
+void custom_run(){
+  unsigned long int temp_millis= millis();
+if(current_delay_microseconds>final_delay_microseconds_at_max_speed && temp_millis-current_millis>=1000){
+//  Serial.println(current_delay_microseconds);
+  current_millis=temp_millis;
+  time_in_sec++;
+      // v=u+at;
+//int final_speed =(500000.0/current_delay_microseconds)+(acceleration*time_in_sec);
+//current_delay_microseconds=500000.0/final_speed;
+current_delay_microseconds=500000.0*current_delay_microseconds/(500000+current_delay_microseconds*acceleration*time_in_sec);
+
+}
 }
